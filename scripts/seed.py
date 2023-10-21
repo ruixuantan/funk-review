@@ -46,6 +46,8 @@ def write_file(file_path: str = OUTPUT_FILE):
                 "released_year",
                 "released_month",
                 "released_day",
+                "total_rating",
+                "rating_count",
             ]
         )
         for track in read_file():
@@ -58,6 +60,8 @@ def write_file(file_path: str = OUTPUT_FILE):
                     track.released_year,
                     track.released_month,
                     track.released_day,
+                    0,
+                    0,
                 ]
             )
 
