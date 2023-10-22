@@ -22,6 +22,6 @@ reset-data:
 	docker-compose run --rm datagen python reset.py
 
 flink:
-	docker-compose exec jobmanager ../bin/flink run --python main.py
+	docker-compose exec jobmanager ../bin/flink run --python update_reviews.py
 
 .PHONY: datagen flink
