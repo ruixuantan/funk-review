@@ -15,13 +15,13 @@ db-shell:
 gen-reviews:
 	docker-compose run --rm datagen python reviews.py
 
-gen-tracks:
-	docker-compose run --rm datagen python tracks.py
+gen-views:
+	docker-compose run --rm datagen python views.py
 
 reset-data:
 	docker-compose run --rm datagen python reset.py
 
 flink:
-	docker-compose exec jobmanager ../bin/flink run --python update_reviews.py
+	docker-compose exec jobmanager ../bin/flink run --python update_track_metrics.py
 
 .PHONY: datagen flink

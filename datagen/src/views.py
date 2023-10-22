@@ -17,14 +17,14 @@ logging.basicConfig(level=logging.INFO)
 
 
 @dataclass
-class TrackClick:
+class View:
     id: int
     user_id: UUID
     track_id: int
 
     @classmethod
     def kafka_topic(cls) -> str:
-        return os.environ.get("KAFKA_TRACK_TOPIC")
+        return os.environ.get("KAFKA_VIEW_TOPIC")
 
     def to_json(self) -> str:
         return json.dumps(
@@ -32,26 +32,26 @@ class TrackClick:
                 "id": self.id,
                 "user_id": str(self.user_id),
                 "track_id": self.track_id,
-                "clicked_on": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "viewed_on": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
         )
 
 
-def generate_track_click(id: int, track_ids: List[int]) -> TrackClick:
-    return TrackClick(
+def generate_view_click(id: int, track_ids: List[int]) -> View:
+    return View(
         id=id,
         user_id=uuid4(),
         track_id=random.choice(track_ids),
     )
 
 
-def generate_track_clicks(track_ids: List[int], freq: int):
+def generate_view_clicks(track_ids: List[int], freq: int):
     kafka = KafkaProducer.from_env()
     id = 1
     while True:
-        track_click = generate_track_click(id, track_ids)
-        logging.info(f"{TrackClick.kafka_topic()}\t{track_click.to_json()}")
-        kafka.produce(TrackClick.kafka_topic(), track_click.to_json())
+        track_click = generate_view_click(id, track_ids)
+        logging.info(f"{View.kafka_topic()}\t{track_click.to_json()}")
+        kafka.produce(View.kafka_topic(), track_click.to_json())
         id += 1
         time.sleep(np.random.poisson(freq))
 
@@ -66,4 +66,4 @@ if __name__ == "__main__":
         default=1,
     )
     track_ids = get_track_ids()
-    generate_track_clicks(track_ids, parser.parse_args().frequency)
+    generate_view_clicks(track_ids, parser.parse_args().frequency)

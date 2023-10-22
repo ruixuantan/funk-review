@@ -1,9 +1,9 @@
-CREATE TABLE track (
+CREATE TABLE view (
     id INT,
     user_id VARCHAR,
     track_id INT,
-    clicked_on TIMESTAMP(3),
-    WATERMARK FOR clicked_on AS clicked_on - INTERVAL '15' SECOND
+    viewed_on TIMESTAMP(3),
+    WATERMARK FOR viewed_on AS viewed_on - INTERVAL '15' SECOND
 ) WITH (
     'connector' = '{{ connector }}',
     'topic' = '{{ topic }}',

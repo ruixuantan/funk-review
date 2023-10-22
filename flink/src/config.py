@@ -22,9 +22,9 @@ class KafkaConfig:
 
 
 @dataclass(frozen=True)
-class TrackConfig(KafkaConfig):
-    topic: str = os.environ.get("KAFKA_TRACK_TOPIC")
-    filename: str = "track"
+class ViewConfig(KafkaConfig):
+    topic: str = os.environ.get("KAFKA_VIEW_TOPIC")
+    filename: str = "view"
 
 
 @dataclass(frozen=True)
@@ -34,40 +34,40 @@ class ReviewConfig(KafkaConfig):
 
 
 @dataclass(frozen=True)
-class TracksPostgresConfig:
+class TrackMetricsPostgresConfig:
     connector: str = "jdbc"
     url: str = (
         f"jdbc:postgresql://{os.environ.get('FUNKREVIEW_DB_HOST')}:"
         f"{os.environ.get('FUNKREVIEW_DB_PORT')}/"
         f"{os.environ.get('FUNKREVIEW_DB_NAME')}"
     )
-    table_name: str = "Tracks"
+    table_name: str = "TrackMetrics"
     username: str = os.environ.get("FUNKREVIEW_DB_USER")
     password: str = os.environ.get("FUNKREVIEW_DB_PASSWORD")
     driver: str = "org.postgresql.Driver"
-    filename: str = "tracks"
+    filename: str = "track_metrics"
 
 
 @dataclass(frozen=True)
-class UpdateReviewsSQL:
-    filename: str = "update_reviews"
+class UpdateTrackMetricsSQL:
+    filename: str = "update_track_metrics"
 
 
 def get_sql_query(
     entity: str,
     template_env: Environment = Environment(loader=FileSystemLoader("./")),
 ) -> str:
-    if entity == TrackConfig.__name__:
-        config = TrackConfig()
+    if entity == ViewConfig.__name__:
+        config = ViewConfig()
         filename = f"source/{config.filename}.sql"
     elif entity == ReviewConfig.__name__:
         config = ReviewConfig()
         filename = f"source/{config.filename}.sql"
-    elif entity == TracksPostgresConfig.__name__:
-        config = TracksPostgresConfig()
+    elif entity == TrackMetricsPostgresConfig.__name__:
+        config = TrackMetricsPostgresConfig()
         filename = f"sink/{config.filename}.sql"
-    elif entity == UpdateReviewsSQL.__name__:
-        config = UpdateReviewsSQL()
+    elif entity == UpdateTrackMetricsSQL.__name__:
+        config = UpdateTrackMetricsSQL()
         filename = f"sql/{config.filename}.sql"
     else:
         assert False, f"{entity} is not a valid entity"

@@ -1,3 +1,4 @@
+import argparse
 import csv
 from dataclasses import dataclass
 from typing import Iterator
@@ -17,7 +18,7 @@ class Track:
     released_day: int
 
 
-def read_file(file_path: str = DATASET_FILE) -> Iterator[Track]:
+def read_file(num_tracks: int, file_path: str = DATASET_FILE) -> Iterator[Track]:
     id = 1
     with open(file_path, encoding="ISO-8859-1") as f:
         reader = csv.DictReader(f)
@@ -31,10 +32,12 @@ def read_file(file_path: str = DATASET_FILE) -> Iterator[Track]:
                 released_month=line["released_month"],
                 released_day=line["released_day"],
             )
+            if id == num_tracks:
+                return
             id += 1
 
 
-def write_file(file_path: str = OUTPUT_FILE):
+def write_file(num_tracks: int, file_path: str = OUTPUT_FILE):
     with open(file_path, "w") as f:
         writer = csv.writer(f)
         writer.writerow(
@@ -50,7 +53,7 @@ def write_file(file_path: str = OUTPUT_FILE):
                 "rating_count",
             ]
         )
-        for track in read_file():
+        for track in read_file(num_tracks):
             writer.writerow(
                 [
                     track.id,
@@ -60,11 +63,17 @@ def write_file(file_path: str = OUTPUT_FILE):
                     track.released_year,
                     track.released_month,
                     track.released_day,
-                    0,
-                    0,
                 ]
             )
 
 
 if __name__ == "__main__":
-    write_file()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-n",
+        "--num_tracks",
+        type=int,
+        help="Number of tracks to be included in parsed dataset.",
+        default=25,
+    )
+    write_file(parser.parse_args().num_tracks)
